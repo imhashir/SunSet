@@ -45,6 +45,8 @@ public class SunSetFragment extends Fragment{
         ObjectAnimator sunAnimator = ObjectAnimator
                 .ofFloat(mSunView, "y", sunStartY, sunStopY)
                 .setDuration(3000);
+        sunAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+        sunAnimator.setRepeatMode(ObjectAnimator.REVERSE);
 
         sunAnimator.start();
     }

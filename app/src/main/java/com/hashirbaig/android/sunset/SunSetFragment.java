@@ -1,12 +1,16 @@
 package com.hashirbaig.android.sunset;
 
+import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.widget.ImageView;
 
 public class SunSetFragment extends Fragment{
@@ -14,6 +18,14 @@ public class SunSetFragment extends Fragment{
     private View mSceneView;
     private View mSunView;
     private View mSkyView;
+
+    private int mBlueSkyColor;
+    private int mSunsetSkyColor;
+    private int mNightSkyColor;
+
+    private boolean mTouched;
+
+    private PointF mDefaultSun;
 
     public static SunSetFragment newInstance() {
         return new SunSetFragment();
@@ -28,14 +40,34 @@ public class SunSetFragment extends Fragment{
         mSunView = v.findViewById(R.id.sun);
         mSkyView = v.findViewById(R.id.sky);
 
+        mDefaultSun = new PointF(mSunView.getTranslationX(), mSunView.getTranslationY());
+
+        mTouched = false;
+
+        mBlueSkyColor = getResources().getColor(R.color.blue_sky);
+        mSunsetSkyColor = getResources().getColor(R.color.sunset_sky);
+        mNightSkyColor = getResources().getColor(R.color.night_sky);
+
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAnimation();
+                if(!mTouched) {
+                    startAnimation();
+                } else {
+                    reset();
+                }
+                mTouched = !mTouched;
             }
         });
 
         return v;
+    }
+
+    private void reset() {
+        mSunView.setTranslationX(mDefaultSun.x);
+        mSunView.setTranslationY(mDefaultSun.y);
+
+        mSkyView.setBackgroundColor(mBlueSkyColor);
     }
 
     public void startAnimation() {
@@ -45,9 +77,16 @@ public class SunSetFragment extends Fragment{
         ObjectAnimator sunAnimator = ObjectAnimator
                 .ofFloat(mSunView, "y", sunStartY, sunStopY)
                 .setDuration(3000);
-        sunAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-        sunAnimator.setRepeatMode(ObjectAnimator.REVERSE);
+        //sunAnimator.setRepeatCount(1);
+        //sunAnimator.setRepeatMode(ObjectAnimator.REVERSE);
+        sunAnimator.setInterpolator(new AccelerateInterpolator());
+
+        ObjectAnimator skyColorAnimator = ObjectAnimator
+                .ofInt(mSkyView, "backgroundColor", mBlueSkyColor, mSunsetSkyColor)
+                .setDuration(3000);
+        skyColorAnimator.setEvaluator(new ArgbEvaluator());
 
         sunAnimator.start();
+        skyColorAnimator.start();
     }
 }

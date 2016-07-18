@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,12 +28,8 @@ public class SunSetFragment extends Fragment{
     private int mBlueSkyColor;
     private int mSunsetSkyColor;
     private int mNightSkyColor;
-    private int mSunLow;
-    private int mSunHigh;
 
     private boolean mTouched;
-
-    private PointF mDefaultSun;
 
     public static SunSetFragment newInstance() {
         return new SunSetFragment();
@@ -47,16 +44,11 @@ public class SunSetFragment extends Fragment{
         mSunView = v.findViewById(R.id.sun);
         mSkyView = v.findViewById(R.id.sky);
         mSunRayView = v.findViewById(R.id.sun_rays);
-
-        mDefaultSun = new PointF(mSunView.getTranslationX(), mSunView.getTranslationY());
-
         mTouched = false;
 
         mBlueSkyColor = getResources().getColor(R.color.blue_sky);
         mSunsetSkyColor = getResources().getColor(R.color.sunset_sky);
         mNightSkyColor = getResources().getColor(R.color.night_sky);
-        mSunLow = getResources().getColor(R.color.bright_sun);
-        mSunHigh = getResources().getColor(R.color.sun_high);
 
         sunPulseAnimation();
         v.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +100,8 @@ public class SunSetFragment extends Fragment{
                 .before(sunAnimator)
                 .before(skyColorAnimator);
 
+
+
         animatorSet.start();
     }
 
@@ -119,6 +113,13 @@ public class SunSetFragment extends Fragment{
                 .ofFloat(mSunView, "y", sunStartY, sunStopY)
                 .setDuration(3000);
         sunAnimator.setInterpolator(new AccelerateInterpolator());
+
+        sunAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                
+            }
+        });
 
         ObjectAnimator skyColorAnimator = ObjectAnimator
                 .ofInt(mSkyView, "backgroundColor", mBlueSkyColor, mSunsetSkyColor)

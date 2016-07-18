@@ -9,7 +9,7 @@
         android:color="@color/sun_high"
         android:width="30dp"
         android:dashWidth="3dp"
-        android:dashGap="9dp"/>
+        android:dashGap="11dp"/>
 
     <gradient
         android:endColor="@color/bright_sun"
